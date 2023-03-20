@@ -11,7 +11,7 @@ namespace CPUFramework
 
         //static - so you dont need to instantiate the class
         //public so you can access it in different projects
-        public static DataTable GetDataTable(String sqlstatement) // take a SQL statement and return data table
+        public static DataTable GetDataTable(string sqlstatement) // take a SQL statement and return data table
         {
             Debug.Print(sqlstatement);
             DataTable dt = new();
@@ -23,7 +23,32 @@ namespace CPUFramework
             cmd.CommandText = sqlstatement;
             var dr = cmd.ExecuteReader();
             dt.Load(dr);
+            SetAllColumnsAllowNulL(dt);
             return dt;
+        }
+
+        public static void ExecuteSQL(string sqlstatement)
+        {
+            GetDataTable(sqlstatement);
+        }
+
+        private static void SetAllColumnsAllowNulL(DataTable dt)
+        {
+            foreach(DataColumn c in dt.Columns)
+            {
+                c.AllowDBNull = true;
+            }
+        }
+
+        public static void DebugPrintDataTable(DataTable dt)
+        {
+            foreach(DataRow r in dt.Rows)
+            {
+                foreach(DataColumn c in dt.Columns)
+                {
+                    Debug.Print(c.ColumnName + " = " + r[c.ColumnName].ToString());
+                }
+            }
         }
     }
 }
