@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace CPUFramework
 {
@@ -9,22 +10,39 @@ namespace CPUFramework
         //public so you can access it in different projects
         public static string ConnectionString = "";
 
+        public static SqlCommand GetSQLCommand(string sprocname)
+        {
+            SqlCommand cmd;
+            using (SqlConnection conn = new SqlConnection(SQLUtility.ConnectionString))
+            {
+                cmd = new SqlCommand(sprocname, conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                conn.Open();
+                SqlCommandBuilder.DeriveParameters(cmd);
+            }
+            return cmd;
+        }
+
+        public static DataTable GetDataTable(SqlCommand cmd)
+        {
+            DataTable dt = new();
+            using (SqlConnection conn = new SqlConnection(SQLUtility.ConnectionString))
+            {
+                Debug.Print("-----"+ Environment.NewLine + cmd.CommandText);
+                conn.Open();
+                cmd.Connection = conn;
+                SqlDataReader dr = cmd.ExecuteReader();
+                dt.Load(dr);
+            }
+            SetAllColumnsAllowNulL(dt);
+            return dt;
+        }
+
         //static - so you dont need to instantiate the class
         //public so you can access it in different projects
         public static DataTable GetDataTable(string sqlstatement) // take a SQL statement and return data table
         {
-            Debug.Print(sqlstatement);
-            DataTable dt = new();
-            SqlConnection conn = new();
-            conn.ConnectionString = ConnectionString;
-            conn.Open();
-            var cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = sqlstatement;
-            var dr = cmd.ExecuteReader();
-            dt.Load(dr);
-            SetAllColumnsAllowNulL(dt);
-            return dt;
+            return GetDataTable(new SqlCommand(sqlstatement));
         }
 
         public static void ExecuteSQL(string sqlstatement)
@@ -63,6 +81,15 @@ namespace CPUFramework
                     Debug.Print(c.ColumnName + " = " + r[c.ColumnName].ToString());
                 }
             }
+        }
+
+
+        public static SqlCommand GetTable(SqlCommand cmd)
+        {
+            DataTable dt = new();
+            SqlDataReader dr = cmd.ExecuteReader();
+            dt.Load(dr);
+            return cmd;
         }
     }
 }
