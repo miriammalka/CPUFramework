@@ -99,6 +99,33 @@ namespace CPUFramework
         {
             return DoExecuteSQL(new SqlCommand(sqlstatement), true);
         }
+
+        public static void SaveDataRow(DataRow row, string sprocname)
+        {
+            SqlCommand cmd = GetSQLCommand(sprocname);
+            foreach(DataColumn col in row.Table.Columns)
+            {
+                string paramname = $"@{col.ColumnName}";
+                if (cmd.Parameters.Contains(paramname))
+                {
+                    //how does it know which value to assign each paramname? 12 min
+                    cmd.Parameters[paramname].Value = row[col.ColumnName];
+                }
+            }
+            DoExecuteSQL(cmd, false);
+
+            foreach(SqlParameter p in cmd.Parameters)
+            {
+                if(p.Direction == ParameterDirection.InputOutput)
+                {
+                    string colname = p.ParameterName.Substring(1);
+                    if (row.Table.Columns.Contains(colname))
+                    {
+                        row[colname] = p.Value;
+                    }
+                }
+            }
+        }
         public static void ExecuteSQL(SqlCommand cmd)
         {
             DoExecuteSQL(cmd, false);
