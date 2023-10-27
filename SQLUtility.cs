@@ -44,6 +44,7 @@ namespace CPUFramework
                         dt.Load(dr);
                     }
                 }
+                //this is where my clonearecipe code broke
                 catch(SqlException ex)
                 {
                     string msg = ParseConstraintMsg(ex.Message);
@@ -268,6 +269,19 @@ namespace CPUFramework
             return value;
         }
 
+        public static DateTime GetValueFromFirstRowAsDateTime(DataTable dt, string columnname)
+        {
+            DateTime value = DateTime.Now;
+            if (dt.Rows.Count > 0)
+            {
+                DataRow r = dt.Rows[0];
+                if (r[columnname] != null && r[columnname] is DateTime)
+                {
+                    value = (DateTime)r[columnname];
+                }
+            }
+            return value;
+        }
         public static bool TableHasChanges(DataTable dt)
         {
             bool b = false;
