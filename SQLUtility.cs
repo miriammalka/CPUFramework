@@ -232,12 +232,12 @@ namespace CPUFramework
             return n;
         }
 
-        private static void SetAllColumnProperties(DataTable dt)
+        private static void SetAllColumnProperties(DataTable dt, bool b = false)
         {
             foreach(DataColumn c in dt.Columns)
             {
                 c.AllowDBNull = true;
-                c.AutoIncrement = false;
+                c.AutoIncrement = b;
             }
         }
 
