@@ -210,6 +210,8 @@ namespace CPUFramework
                         if(words.Length > 1)
                         {
                             msg = $"Cannot delete {words[0]} because it has a related {words[1]} record.";
+                            //this is for update:
+                            //msg = $"Cannot insert {words[0]} record without {words[1]}.";
                         }
                     }
                 }
