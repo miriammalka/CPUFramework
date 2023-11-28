@@ -8,8 +8,28 @@ namespace CPUFramework
     public class SQLUtility
     {
         //public so you can access it in different projects
-        public static string ConnectionString = "";
+        private static string ConnectionString = "";
 
+        public static void SetConnectionString(string connstring, bool tryopen, string userid = "", string password = "")
+        {
+            ConnectionString = connstring;
+            if(userid != "")
+            {
+                //MME I want to better understand the syntax here (30 min) and I don't understand why tryopen was added
+                SqlConnectionStringBuilder b = new();
+                b.ConnectionString = ConnectionString;
+                b.UserID = userid;
+                b.Password = password;
+                ConnectionString = b.ConnectionString;
+            }
+            if (tryopen)
+            {
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    conn.Open();
+                }
+            }
+        }
         public static SqlCommand GetSQLCommand(string sprocname)
         {
             SqlCommand cmd;
@@ -288,6 +308,7 @@ namespace CPUFramework
             StringBuilder sb = new StringBuilder();
             if(cmd.Connection != null)
             {
+                //sb.AppendLine($"--{cmd.Connection.ConnectionString}");
                 sb.AppendLine($"--{cmd.Connection.DataSource}");
                 sb.AppendLine($"use {cmd.Connection.Database}");
                 sb.AppendLine("go");
