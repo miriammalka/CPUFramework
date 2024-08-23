@@ -54,6 +54,7 @@ namespace CPUFramework
             return GetListFromDataTable(dt);
         }
 
+
         protected List<T> GetListFromDataTable(DataTable dt)
         {
             List<T> lst = new();
@@ -155,7 +156,14 @@ namespace CPUFramework
                 if(value == DBNull.Value) { value = null;}
                 try
                 {
-                    prop.SetValue(this, value);
+                    if (prop.PropertyType == typeof(bool))
+                    {
+                        prop.SetValue(this, Convert.ToBoolean(value));                       
+                    }
+                    else
+                    {
+                        prop.SetValue(this, value);
+                    }
                 }
                 catch (Exception ex)
                 {
