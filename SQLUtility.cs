@@ -365,6 +365,11 @@ namespace CPUFramework
             dt.Load(dr);
             return cmd;
         }
+
+        public static int GetIntParamValue(SqlCommand cmd, string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 //note
