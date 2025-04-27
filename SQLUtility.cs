@@ -364,24 +364,8 @@ namespace CPUFramework
             SqlDataReader dr = cmd.ExecuteReader();
             dt.Load(dr);
             return cmd;
-        }
-
-        public static int GetIntParamValue(SqlCommand cmd, string paramName)
-        {
-            // Ensure the parameter exists in the command's parameters collection
-            SqlParameter param = cmd.Parameters[paramName];
-
-            // Check if it's an output parameter
-            if (param != null && param.Direction == ParameterDirection.Output)
-            {
-                // Return the value of the parameter (it will be an integer)
-                return Convert.ToInt32(param.Value);
-            }
-
-            // Throw an exception if the parameter is not found or not an output parameter
-            throw new ArgumentException($"Parameter {paramName} not found or not an output parameter.", nameof(paramName));
-        }
+        }    
 
     }
 }
-//note
+
